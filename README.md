@@ -17,10 +17,12 @@ pip install requests
 
 ### Lookup MAC Addresses
 
-You can look up one or more MAC addresses (colon, dash, or dot separated):
+You can look up one or more MAC addresses. All common formats are accepted, including colon, dash, dot, whitespace, no separator and an optional `0x` prefix:
 
 ```sh
-python maclookup.py -m 00:16:9C:11:11:11 aa-bb-cc-dd-ee-11 00.16.9C.11.11.11
+python maclookup.py -m 00:16:9C:11:11:11 aa-bb-cc-dd-ee-11 0016.9C11.1111
+python maclookup.py -m 00.16.9C.11.11.11 00169C111111 0x00169C111111
+python maclookup.py -m "00 16 9C 11 11 11"
 ```
 
 ### Update the Database
@@ -49,9 +51,20 @@ AA:BB:CC:DD:EE:11 - Vendor not found
 
 ## Notes
 
-- Supported MAC address formats: colon (`:`), dash (`-`), dot (`.`).
+- Supported MAC address formats: colon (`:`), dash (`-`), dot (`.`), whitespace, no separator, with an optional `0x` prefix.
 - The script selects the vendor with the longest-match mac address.
 - The database is stored in your $HOME/Documents folder.
+
+## Releases
+
+Pushing a commit to `main` with `[build]` in the message builds the Linux and Windows executables and publishes them as a GitHub Release. The commit message must also contain a semantic version, for example:
+
+```sh
+git commit -m "Release [build] v1.2.3"
+git push origin main
+```
+
+The release is published with tag `v1.2.3` and the versioned executables as assets.
 
 ## Compatibility
 
