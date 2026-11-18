@@ -4,42 +4,53 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 1.2.3)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 jobs:
   prepare:
-    if: contains(github.event.head_commit.message, '[build]')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[build]')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
 
     steps:
-      - name: Extract version from commit message
+      - name: Extract version
         id: version
         env:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           python3 - <<'PY'
           import os
           import re
           import sys
 
-          message = os.environ.get('COMMIT_MESSAGE', '')
-          match = re.search(
-              r'\[build\]\s*v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)',
-              message,
-              re.IGNORECASE,
-          )
-          if match is None:
-              sys.exit(
-                  "Missing version in commit message. "
-                  "Use a message like '[build] v1.2.3'."
-              )
+          semver = r'\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?'
+          input_version = os.environ.get('INPUT_VERSION', '').strip()
+          if input_version:
+              version = input_version[1:] if input_version[:1].lower() == 'v' else input_version
+          else:
+              message = os.environ.get('COMMIT_MESSAGE', '')
+              match = re.search(r'\[build\]\s*v?(' + semver + ')', message, re.IGNORECASE)
+              if match is None:
+                  sys.exit(
+                      "Missing version. For push events use a message like "
+                      "'[build] v1.2.3'; for manual runs provide the version input."
+                  )
+              version = match.group(1)
 
-          version = match.group(1)
+          if re.fullmatch(semver, version) is None:
+              sys.exit(f"Invalid version: {version!r}. Use MAJOR.MINOR.PATCH, e.g. 1.2.3.")
+
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
               output.write(f'version={version}\n')
               output.write(f'tag=v{version}\n')

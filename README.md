@@ -66,6 +66,8 @@ git push origin main
 
 The release is published with tag `v1.2.3` and the versioned executables as assets.
 
+You can also run the workflow manually from the **Actions** tab (`Build` → **Run workflow**), providing the version number as input. In that case no `[build]` marker is needed.
+
 ## Compatibility
 
 - **Linux:** Fully supported.
