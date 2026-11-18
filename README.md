@@ -56,6 +56,7 @@ AA:BB:CC:DD:EE:11 - Vendor not found
 - The database is stored in the user data folder:
   - Linux: `${XDG_DATA_HOME:-~/.local/share}/maclookup/mac-vendors-export.json`
   - Windows: `%LOCALAPPDATA%\maclookup\mac-vendors-export.json`
+- If the database is older than 30 days, the script prints a warning suggesting to run `-u` to update it.
 
 ## Releases
 

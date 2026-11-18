@@ -7,11 +7,14 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 import requests
 
 DB_URL = 'https://maclookup.app/downloads/json-database/get-db?'
+DB_MAX_AGE_DAYS = 30
+SECONDS_PER_DAY = 24 * 60 * 60
 
 
 def get_db_path():
@@ -53,6 +56,20 @@ def check_db_exist(db_path):
     """Download the database if it does not exist."""
     if not db_path.is_file():
         download_db(db_path)
+
+
+def warn_if_db_old(db_path):
+    """Print a warning if the database is older than the allowed age."""
+    age_seconds = time.time() - db_path.stat().st_mtime
+    if age_seconds <= DB_MAX_AGE_DAYS * SECONDS_PER_DAY:
+        return
+    age_days = int(age_seconds // SECONDS_PER_DAY)
+    command = Path(sys.argv[0]).name
+    print(
+        f"Warning: the MAC vendor database is {age_days} days old. "
+        f"Run '{command} -u' to update it.",
+        file=sys.stderr,
+    )
 
 
 def load_db(db_path):
@@ -116,6 +133,7 @@ def main():
         download_db(db_path)
     else:
         check_db_exist(db_path)
+        warn_if_db_old(db_path)
         db = load_db(db_path)
         maclookup(db, args.mac)
 
