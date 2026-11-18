@@ -81,17 +81,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests pyinstaller
 
-      - name: Build executable
+      - name: Verify version
         run: >-
-          pyinstaller --onefile
-          --name "maclookup-${{ needs.prepare.outputs.version }}"
-          maclookup.py
+          python -c "import sys, maclookup;
+          sys.exit(0 if maclookup.__version__ == '${{ needs.prepare.outputs.version }}'
+          else f'Version mismatch: maclookup.py has {maclookup.__version__}, release requires ${{ needs.prepare.outputs.version }}.')"
+
+      - name: Build executable
+        run: pyinstaller --onefile --name maclookup maclookup.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: dist/maclookup-*
+          path: dist/maclookup*
           if-no-files-found: error
 
   release:

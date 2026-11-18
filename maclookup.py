@@ -12,6 +12,8 @@ from pathlib import Path
 
 import requests
 
+__version__ = '1.2.0'
+
 DB_URL = 'https://maclookup.app/downloads/json-database/get-db?'
 DB_MAX_AGE_DAYS = 30
 SECONDS_PER_DAY = 24 * 60 * 60
@@ -48,6 +50,10 @@ def parse_args():
             'Download the last database version from '
             'https://maclookup.app/downloads/json-database/get-db?.'
         ),
+    )
+    parser.add_argument(
+        '-v', '--version', action='version',
+        version=f'%(prog)s {__version__}',
     )
     return parser.parse_args()
 

@@ -33,6 +33,14 @@ To download the latest vendor database:
 python maclookup.py -u
 ```
 
+### Show Version
+
+To print the release version:
+
+```sh
+python maclookup.py -v
+```
+
 ## Output
 
 For each MAC address, the script prints the vendor name if found, or "Vendor not found" otherwise.
@@ -67,7 +75,7 @@ git commit -m "Release [build] v1.2.3"
 git push origin main
 ```
 
-The release is published with tag `v1.2.3` and the versioned executables as assets.
+The release is published with tag `v1.2.3` and the executables as assets: `maclookup` for Linux and `maclookup.exe` for Windows. The version in the commit message or manual input must match `__version__` in `maclookup.py`, otherwise the build fails.
 
 You can also run the workflow manually from the **Actions** tab (`Build` → **Run workflow**), providing the version number as input. In that case no `[build]` marker is needed.
 
