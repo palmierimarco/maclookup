@@ -4,14 +4,25 @@
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
 import requests
 
-DB_FILE = Path.home() / 'Documents' / 'mac-vendors-export.json'
 DB_URL = 'https://maclookup.app/downloads/json-database/get-db?'
+
+
+def get_db_path():
+    """Return the platform-specific database path."""
+    if sys.platform.startswith('win'):
+        base = os.environ.get('LOCALAPPDATA')
+        base_path = Path(base) if base else Path.home() / 'AppData' / 'Local'
+    else:
+        base = os.environ.get('XDG_DATA_HOME')
+        base_path = Path(base) if base else Path.home() / '.local' / 'share'
+    return base_path / 'maclookup' / 'mac-vendors-export.json'
 
 
 def parse_args():
@@ -100,11 +111,12 @@ def maclookup(db, maclist):
 def main():
     """Run the MAC address vendor lookup."""
     args = parse_args()
+    db_path = get_db_path()
     if args.update:
-        download_db(DB_FILE)
+        download_db(db_path)
     else:
-        check_db_exist(DB_FILE)
-        db = load_db(DB_FILE)
+        check_db_exist(db_path)
+        db = load_db(db_path)
         maclookup(db, args.mac)
 
 

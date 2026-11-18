@@ -53,7 +53,9 @@ AA:BB:CC:DD:EE:11 - Vendor not found
 
 - Supported MAC address formats: colon (`:`), dash (`-`), dot (`.`), whitespace, no separator, with an optional `0x` prefix.
 - The script selects the vendor with the longest-match mac address.
-- The database is stored in your $HOME/Documents folder.
+- The database is stored in the user data folder:
+  - Linux: `${XDG_DATA_HOME:-~/.local/share}/maclookup/mac-vendors-export.json`
+  - Windows: `%LOCALAPPDATA%\maclookup\mac-vendors-export.json`
 
 ## Releases
 
@@ -70,5 +72,5 @@ You can also run the workflow manually from the **Actions** tab (`Build` → **R
 
 ## Compatibility
 
-- **Linux:** Fully supported.
+- **Linux:** Fully supported. The release binary is built on Ubuntu 22.04 and requires glibc 2.35 or newer.
 - **Windows:** Fully supported. You can use the .exe file without install python.

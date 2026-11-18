@@ -61,7 +61,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             artifact: maclookup-linux
           - os: windows-latest
             artifact: maclookup-windows
